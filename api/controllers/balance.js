@@ -22,7 +22,7 @@ const getBalances = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -39,15 +39,24 @@ const createBalance = async (req, res) => {
       amount: req.body.amount,
       timestamp: new Date(),
     };
-    const addedBalance = await db.collection("balances").add(balance);
+    let addedBalance = await db.collection("balances").add(balance);
+    // .then(async (docRef) => {
+    //   await db
+    //     .collection("balances")
+    //     .doc(docRef.id)
+    //     .get()
+    //     .then((snapshot) => {
+    //       addedBalance = snapshot.data();
+    //     });
+    // });
     res.status(201).json({
       success: true,
-      data: { id: addedBalance.id, balance },
+      data: { id: addedBalance.id, ...balance },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };

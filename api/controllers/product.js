@@ -36,7 +36,7 @@ const getProducts = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -61,7 +61,7 @@ const createProduct = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -77,7 +77,7 @@ const deleteProduct = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error,
+      message: error.message,
     });
   }
 };
