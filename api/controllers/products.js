@@ -23,11 +23,16 @@ const getProducts = async (req, res) => {
       for (const product of products.docs) {
         productsArray.push({ id: product.id, ...product.data() });
       }
+      res.status(200).json({
+        success: true,
+        data: productsArray,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "Product not found",
+      });
     }
-    res.status(200).json({
-      success: true,
-      data: productsArray,
-    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -65,7 +70,7 @@ const deleteProduct = async (req, res) => {
   try {
     const id = req.params.id;
     await db.collection("products").doc(id).delete();
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: "Product deleted successfully",
     });
