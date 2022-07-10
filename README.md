@@ -9,3 +9,9 @@
 ```
 npm run dev
 ```
+
+## Screenshots
+
+![](/docs/1.png)
+
+![](/docs/2.png)
