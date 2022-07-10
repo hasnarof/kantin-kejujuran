@@ -6,18 +6,19 @@ const getProducts = async (req, res) => {
     let productsArray = [];
     const productsQuery = db.collection("products");
 
-    if (req.query.timestampDesc == 1) {
-      productsQuery.orderBy("timestamp", "desc");
-    } else {
-      productsQuery.orderBy("timestamp");
-    }
-    if (req.query.nameDesc == 1) {
-      productsQuery.orderBy("name", "desc");
-    } else {
-      productsQuery.orderBy("name");
-    }
+    let products;
+    // if (req.query.timestampDesc == 1) {
+    //   products = await productsQuery.orderBy("timestamp", "desc").get();
+    // } else {
+    //   products = await productsQuery.orderBy("timestamp").get();
+    // }
+    // if (req.query.nameDesc == 1) {
+    //   products = await productsQuery.orderBy("name", "desc").get();
+    // } else {
+    //   products = await productsQuery.orderBy("name").get();
+    // }
 
-    const products = await productsQuery.get();
+    products = await productsQuery.get();
 
     if (products.docs.length > 0) {
       for (const product of products.docs) {

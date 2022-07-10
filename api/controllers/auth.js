@@ -1,7 +1,9 @@
+require("dotenv").config();
 var fire = require("../routes/fire");
 var db = fire.firestore();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const tokenKey = process.env.TOKEN_KEY || "HASNACANTIK";
 
 const register = async (req, res) => {
   try {
@@ -9,19 +11,17 @@ const register = async (req, res) => {
 
     // Validate user input
     if (!(studentId && name && password)) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Please provide studentId, name and password",
       });
-      return;
     }
 
     if (studentId.length !== 5) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
-        message: "Student ID must be 9 digits long",
+        message: "Student ID must be 5 digits long",
       });
-      return;
     }
 
     firstDigit = parseInt(studentId.substring(0, 1));
@@ -30,28 +30,33 @@ const register = async (req, res) => {
     total = parseInt(studentId.substring(3, 5));
 
     if (firstDigit + secondDigit + thirdDigit !== total) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Student ID not valid",
       });
-      return;
     }
 
-    db.collection("users")
+    const oldUser = await db
+      .collection("users")
       .where("studentId", "==", studentId)
       .limit(1)
       .get()
       .then((snapshot) => {
         if (!snapshot.empty) {
-          res.status(400).json({
+          return res.status(400).json({
             success: false,
             message: "Student ID already exists",
           });
-          return;
         }
+        return;
       });
 
+    if (oldUser) {
+      return;
+    }
+
     const encryptedPassword = await bcrypt.hash(password, 10);
+    // const encryptedPassword = bcrypt.hash(password, 10);
 
     let user = {
       studentId: studentId,
@@ -59,16 +64,13 @@ const register = async (req, res) => {
       password: encryptedPassword,
     };
     await db.collection("users").add(user);
+    // db.collection("users").add(user);
 
-    const token = jwt.sign(
-      { studentId: studentId, name: name },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "2h",
-      }
-    );
+    const token = jwt.sign({ studentId: studentId, name: name }, tokenKey, {
+      expiresIn: "2h",
+    });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: {
         studentId: studentId,
@@ -77,7 +79,7 @@ const register = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -114,7 +116,7 @@ const login = (req, res) => {
           if (bcrypt.compareSync(password, user.password)) {
             const token = jwt.sign(
               { studentId: studentId, name: user.studentName },
-              process.env.TOKEN_KEY,
+              tokenKey,
               {
                 expiresIn: "2h",
               }
@@ -127,11 +129,13 @@ const login = (req, res) => {
                 token: token,
               },
             });
+            return;
           } else {
             res.status(400).json({
               success: false,
               message: "Password incorrect",
             });
+            return;
           }
         });
       });

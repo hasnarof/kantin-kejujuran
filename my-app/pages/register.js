@@ -16,21 +16,22 @@ import {
 } from "react-bootstrap";
 import Link from "next/link";
 
-export default function Login() {
+export default function Register() {
   const [currentUser, setCurrentUser] = useState(undefined);
-  const [inputsLogin, setInputsLogin] = useState({});
+  const [inputsRegister, setInputsRegister] = useState({});
 
-  const handleChangeLogin = (event) => {
+  const handleChangeRegister = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setInputsLogin((values) => ({ ...values, [name]: value }));
+    setInputsRegister((values) => ({ ...values, [name]: value }));
   };
 
-  const handleSubmitLogin = async (e) => {
+  const handleSubmitRegister = async (e) => {
     e.preventDefault();
-    const user = await AuthService.login(
-      inputsLogin.studentId,
-      inputsLogin.password
+    const user = await AuthService.register(
+      inputsRegister.studentId,
+      inputsRegister.name,
+      inputsRegister.password
     );
     if (user) {
       setCurrentUser(user);
@@ -42,22 +43,31 @@ export default function Login() {
     if (user) {
       Router.push("/");
     }
-  }, [currentUser, handleSubmitLogin]);
+  }, [currentUser, handleSubmitRegister]);
 
   return (
     <Container>
       <Row className="vh-100 d-flex justify-content-center align-items-center">
         <Col xs={12} md={4} className="shadow py-3">
           <h3 className="text-center">Kantin Kejujuran</h3>
-          <h4 className="text-center">Login</h4>
-          <Form onSubmit={handleSubmitLogin}>
+          <h4 className="text-center">Register</h4>
+          <Form onSubmit={handleSubmitRegister}>
             <Form.Group className="mb-3">
               <Form.Label>Student ID</Form.Label>
               <Form.Control
                 type="text"
                 name="studentId"
-                value={inputsLogin.studentId || ""}
-                onChange={handleChangeLogin}
+                value={inputsRegister.studentId || ""}
+                onChange={handleChangeRegister}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={inputsRegister.name || ""}
+                onChange={handleChangeRegister}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -65,16 +75,16 @@ export default function Login() {
               <Form.Control
                 type="password"
                 name="password"
-                value={inputsLogin.password || ""}
-                onChange={handleChangeLogin}
+                value={inputsRegister.password || ""}
+                onChange={handleChangeRegister}
               />
             </Form.Group>
             <div className="d-grid gap-2">
-              <Button variant="info" onClick={handleSubmitLogin}>
-                Login
+              <Button variant="info" onClick={handleSubmitRegister}>
+                Register
               </Button>
-              <Link href="/register" passHref>
-                <Button variant="outline-info">Register</Button>
+              <Link href="/login" passHref>
+                <Button variant="outline-info">Login</Button>
               </Link>
             </div>
           </Form>
