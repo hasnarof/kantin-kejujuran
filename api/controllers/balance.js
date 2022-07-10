@@ -61,4 +61,46 @@ const createBalance = async (req, res) => {
   }
 };
 
-module.exports = { getBalances, createBalance };
+const getBalance = async (req, res) => {
+  try {
+    const balance = await db.collection("balances").doc("balance").get();
+    res.status(200).json({
+      success: true,
+      data: balance.data(),
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateBalance = async (req, res) => {
+  try {
+    const transaction = {
+      type: req.body.type,
+      amount: req.body.amount,
+    };
+    const query = await db.collection("balances").doc("balance").get();
+    let balance = query.data();
+    if (transaction.type === "debit") {
+      balance.amount = parseInt(balance.amount) + parseInt(transaction.amount);
+    } else {
+      balance.amount = parseInt(balance.amount) - parseInt(transaction.amount);
+    }
+
+    await db.collection("balances").doc("balance").update(balance);
+    res.status(201).json({
+      success: true,
+      data: balance,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { getBalances, createBalance, getBalance, updateBalance };

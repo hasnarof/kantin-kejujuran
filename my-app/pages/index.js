@@ -28,8 +28,17 @@ export default function Home() {
   const [inputProductImage, setInputProductImage] = useState("");
   const [percent, setPercent] = useState(0);
 
+  const [balance, setBalance] = useState(0);
+  const [transactionAmount, setTransactionAmount] = useState(0);
+
+  const currencyFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   React.useEffect(() => {
     getProducts();
+    getBalance();
   }, []);
 
   const getProducts = () => {
@@ -103,6 +112,47 @@ export default function Home() {
     }
   };
 
+  const getBalance = () => {
+    axios
+      .get(`/api/balance`)
+      .then((res) => {
+        setBalance(res.data.data.amount);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleChangeTransactionAmount = (event) => {
+    setTransactionAmount(event.target.value);
+  };
+
+  const updateBalance = (transactionType) => {
+    if (transactionType === "credit") {
+      if (transactionAmount > balance) {
+        alert("Insufficient balance!");
+      } else {
+        axios
+          .put(`/api/balance`, { type: "credit", amount: transactionAmount })
+          .then((res) => {
+            getBalance();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    } else {
+      axios
+        .put(`/api/balance`, { type: "debit", amount: transactionAmount })
+        .then((res) => {
+          getBalance();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
   return (
     <div>
       <Navbar bg="light" variant="light" expand="lg">
@@ -125,7 +175,13 @@ export default function Home() {
       </Navbar>
       <Container>
         <Row>
-          <Col xs={12} md={8} style={{}} id="product-container">
+          <Col
+            xs={12}
+            md={8}
+            style={{}}
+            id="product-container"
+            className="mt-3"
+          >
             <h3>Products</h3>
             <Row className="gy-4">
               {products.map((product) => (
@@ -154,8 +210,32 @@ export default function Home() {
               ))}
             </Row>
           </Col>
-          <Col xs={12} md={4}>
+          <Col xs={12} md={4} className="mt-4">
             <h5>Balances</h5>
+            <h1>{currencyFormatter.format(balance)}</h1>
+            <Row>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Jumlah Setoran/Tarikan</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={transactionAmount}
+                    onChange={handleChangeTransactionAmount}
+                  />
+                </Form.Group>
+                <div className="d-flex flex-row-reverse gap-2">
+                  <Button variant="info" onClick={() => updateBalance("debit")}>
+                    Setor
+                  </Button>
+                  <Button
+                    variant="info"
+                    onClick={() => updateBalance("credit")}
+                  >
+                    Tarik
+                  </Button>
+                </div>
+              </Form>
+            </Row>
           </Col>
         </Row>
       </Container>
