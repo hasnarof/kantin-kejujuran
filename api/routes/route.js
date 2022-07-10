@@ -13,13 +13,13 @@ const { getBalances, createBalance } = require("../controllers/balance");
 
 const { register, login } = require("../controllers/auth");
 
-router.route("/products").get(getProducts).post(createProduct);
+router.route("/api/products").get(getProducts).post(createProduct);
 
-router.route("/products/:id").delete(deleteProduct);
+router.route("/api/products/:id").delete(deleteProduct);
 
-router.route("/balances").get(getBalances).post(createBalance);
+router.route("/api/balances").get(getBalances).post(createBalance);
 
-router.route("/login").post(login);
-router.route("/register").post(register);
+router.route("/api/login").post(login);
+router.route("/api/register").post(register);
 
 module.exports = router;

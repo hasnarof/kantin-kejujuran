@@ -43,9 +43,9 @@ const getProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    db.settings({
-      timestampsInSnapshots: true,
-    });
+    // db.settings({
+    //   timestampsInSnapshots: true,
+    // });
     const product = {
       name: req.body.name,
       description: req.body.description,
