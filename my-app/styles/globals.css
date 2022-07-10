@@ -32,3 +32,7 @@ a {
 #fab-add:hover {
   opacity: 0.8;
 }
+
+#btn-delete-product:hover {
+  opacity: 0.8;
+}

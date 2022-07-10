@@ -13,7 +13,11 @@ import {
   Form,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSolid, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSolid,
+  faCirclePlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import storage from "../config/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
@@ -86,6 +90,19 @@ export default function Home() {
     );
   };
 
+  const handleDeleteProduct = (id) => {
+    if (confirm("Are you sure want to delete this product?") == true) {
+      axios
+        .delete(`api/products/${id}`)
+        .then((res) => {
+          getProducts();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
   return (
     <div>
       <Navbar bg="light" variant="light" expand="lg">
@@ -123,7 +140,14 @@ export default function Home() {
                     <Card.Body>
                       <Card.Title>{product.name}</Card.Title>
                       <Card.Text>{product.description}</Card.Text>
-                      <Button variant="info">Go somewhere</Button>
+                      <FontAwesomeIcon
+                        id="btn-delete-product"
+                        icon={(faSolid, faTrash)}
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleDeleteProduct(product.id)}
+                      />
                     </Card.Body>
                   </Card>
                 </Col>
