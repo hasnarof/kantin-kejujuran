@@ -7,7 +7,15 @@
 ## How to Run in Development
 
 ```
+// start server
+cd api
+npm install
 npm run dev
+
+// start client
+cd my-app
+npm install
+npm run start:dev
 ```
 
 ## Screenshots
