@@ -185,7 +185,7 @@ export default function Home() {
             <h3>Products</h3>
             <Row className="gy-4">
               {products.map((product) => (
-                <Col xs={12} md={3}>
+                <Col key={product.id} xs={12} md={3}>
                   <Card className="shadow-sm" style={{ border: "none" }}>
                     <Card.Img
                       variant="top"
